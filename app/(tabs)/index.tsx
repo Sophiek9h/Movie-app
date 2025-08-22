@@ -13,14 +13,23 @@ import { useRouter } from "expo-router";
 import useFetch from "@/services/useFetch";
 import { fetchMovies } from "@/services/api";
 import MovieCard from "@/components/MovieCard";
+import { getTrendingMovies } from "@/services/appwrite";
+import TrendingCard from "@/components/TrendingCard";
 
 export default function Index() {
   const router = useRouter();
 
   const {
+    data: trendingMovies,
+    loading: trendingLoading,
+    error: trendingError,
+  } = useFetch(getTrendingMovies);
+
+
+  const {
     data: movies,
-    loading,
-    error,
+    loading: moviesLoading,
+    error: moviesError,
   } = useFetch(() =>
     fetchMovies({
       query: "",
@@ -39,11 +48,11 @@ export default function Index() {
       >
         <Image source={icons.logo} className="w-12 h-10 mt-20 mb-5 mx-auto" />
 
-        {loading ? (
+        {moviesLoading || trendingLoading ? (
           <ActivityIndicator size="large" color="#0000ff" className="mt-10" />
-        ) : error ? (
+        ) : moviesError || trendingError ? (
           <Text className="text-red-500 text-center mt-10">
-            Error fetching movies: {error.message}
+            Error fetching movies: {moviesError?.message || trendingError?.message}
           </Text>
         ) : (
           <View className="flex-1 mt-5">
@@ -51,6 +60,27 @@ export default function Index() {
               onPress={() => router.push("/search")}
               placeholder="Search for a Movie"
             />
+
+            {trendingMovies && trendingMovies.length > 0 && (
+              <>
+                <Text className="text-white text-lg font-semibold mt-5 mb-3">
+                  Trending Movies
+                </Text>
+
+                <FlatList
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  ItemSeparatorComponent={() => (
+                    <View className="w-4" />
+                  )}
+                  data={trendingMovies}
+                  renderItem={({ item, index }) => (
+                    <TrendingCard movie={item} index = {index}/>
+                  )}
+                  keyExtractor={(item) => item.movie_id.toString()}
+                />
+              </>
+            )}
 
             <>
               <Text className="text-white text-lg font-semibold mt-5 mb-3">

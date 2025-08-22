@@ -6,6 +6,7 @@ import useFetch from "@/services/useFetch";
 import { fetchMovies } from "@/services/api";
 import { icons } from "@/constants/icons";
 import SearchBar from "@/components/SearchBar";
+import { updateSerachCount } from "@/services/appwrite";
 
 const search = () => {
   const [searchQuery, setsearchQuery] = useState("");
@@ -25,13 +26,23 @@ const search = () => {
   );
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (searchQuery.trim() !== "") {
-        fetchData();
-      }
+    const timeoutId = setTimeout(async () => {
+      if (searchQuery.trim()) {
+        await fetchData();
+      } else {
+        reset();
+      } 
     }, 500);
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
+
+  
+// Update search count when a movie is fetched
+  useEffect(() => {
+    if (searchQuery.trim() && movies?.length > 0) {
+      updateSerachCount(searchQuery, movies[0]);
+    }
+  }, [movies]);
 
   return (
     <View className="flex-1 bg-primary ">
