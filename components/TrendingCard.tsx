@@ -23,7 +23,7 @@ const TrendingCard = ({movie: {movie_id, title, poster_url}, index}: TrendingCar
                     <Image source={images.rankingGradient} className='size-14 resizeMode-cover' />
                 </MaskedView>
             </View>
-            <Text className='font-bold text-sm mt-2 text-light-200' numberOfLines={2}>
+            <Text className='font-bold text-sm mt-2 text-light-200' numberOfLines={1}>
               {title}
             </Text>
 

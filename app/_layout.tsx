@@ -7,6 +7,7 @@ export default function RootLayout() {
   return (
     <>
 
+      {/* hide the status bar */}
       <StatusBar hidden ={true} />
 
       <Stack>
